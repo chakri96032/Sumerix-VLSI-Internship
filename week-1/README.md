@@ -48,5 +48,3 @@
  ## **Key Takeaway:**  
 - Choose **ASIC** for **high-volume, stable designs** where performance and efficiency are critical.  
 - Choose **FPGA** for **prototyping, low-volume, or evolving applications** where flexibility matters most.  
-
-Would you like me to also prepare a **visual flowchart decision guide** (ASIC vs FPGA selection based on cost, volume, and flexibility) to include in your internship project report?
