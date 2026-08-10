@@ -1,4 +1,5 @@
- PART-A ASICs are fixed-function chips optimized for high-volume, high-performance applications, while FPGAs are reprogrammable devices ideal for prototyping, evolving standards, and low-volume products.** The choice depends on trade-offs between cost, flexibility, time-to-market, and efficiency. Below is a structured comparison with practical industry examples.
+ ## PART-A Part A – Semiconductor and VLSI Fundamentals
+ ## ASICs are fixed-function chips optimized for high-volume, high-performance applications, while FPGAs are reprogrammable devices ideal for prototyping, evolving standards, and low-volume products.** The choice depends on trade-offs between cost, flexibility, time-to-market, and efficiency. Below is a structured comparison with practical industry examples.
 
 ---
 
