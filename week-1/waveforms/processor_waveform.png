@@ -1,0 +1,53 @@
+module processor_tb;
+  reg clk, reset;
+  wire [31:0] PC;
+  wire [31:0] instruction;
+  wire [31:0] alu_result;
+
+  // Instantiate your processor
+  processor uut (
+    .clk(clk),
+    .reset(reset),
+    .PC(PC),
+    .instruction(instruction),
+    .alu_result(alu_result)
+  );
+
+  // Clock generation: 10 ns period
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;  // Toggle every 5 ns
+  end
+
+  // Timing sequence
+  initial begin
+    // 0–10 ns: Reset active
+    reset = 1;
+    #10;
+
+    // 10–20 ns: Reset deasserted, PC increments
+    reset = 0;
+    #10;
+
+    // 20–30 ns: First instruction fetched
+    // (Processor should automatically fetch at PC=4)
+    #10;
+
+    // 30–40 ns: ALU executes decoded operation
+    #10;
+
+    // 40–200 ns: PC increments by 4 each cycle
+    #160;
+
+    $stop; // End simulation
+  end
+endmodule
+0–10 ns → reset=1, PC forced to 0.
+
+10–20 ns → reset=0, PC increments to 4.
+
+20–30 ns → Instruction fetch occurs.
+
+30–40 ns → ALU result matches decoded operation.
+
+40–200 ns → PC continues incrementing by 4 each cycle.
