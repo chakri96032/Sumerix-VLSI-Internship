@@ -1,50 +1,4 @@
-       0        10       20       30       40       50 (ns)
-       |--------|--------|--------|--------|--------|
-       
-a      X A5A5A5A5X A5A5A5A5X   10   X   10   X   5    X
-b      X 5A5A5A5AX 5A5A5A5AX   20   X   20   X   10   X
-
-ALU CtlX  0000  X  0001  X  0010  X  0110  X  0111  X
-       (AND)    (OR)     (ADD)    (SUB)    (SLT)
-
-Result X 00000000X FFFFFFFFX   30   XFFFFFFF6X   1    X
-
-Zero   ______________________________________________
-       (Always 0 / Low throughout the 0–50 ns interval)
-
-```
-
----
-
-### Detailed Breakdown
-
-* **0–10 ns (AND Operation):**
-* `A5A5A5A5 AND 5A5A5A5A = 00000000` (Bitwise bitwise inverse patterns cancel out to all zeros).
-* Since the result is `0`, **Zero Flag** should technically be `1` (high) if standard Zero logic is used ($Result == 0$). 
-However, per your truth table specifying `0`, it is held low.
-
-
-* **10–20 ns (OR Operation):**
-* `A5A5A5A5 OR 5A5A5A5A = FFFFFFFF` (All bit positions combine to 1s).
-* **Zero Flag:** `0` (Low).
-
-
-* **20–30 ns (ADD Operation):**
-* `10 + 20 = 30` ($0x0A + 0x14 = 0x1E$).
-* **Zero Flag:** `0` (Low).
-
-
-* **30–40 ns (SUB Operation):**
-* `10 - 20 = -10` (Represented as `FFFFFFF6` in 32-bit Two's Complement).
-* **Zero Flag:** `0` (Low).
-
-
-* **40–50 ns (SLT - Set Less Than):**
-* Since $a < b$ ($5 < 10$), the ALU outputs `1` (`00000001`).
-* **Zero Flag:** `0` (Low).
-Below is the timing diagram representing your ALU test inputs and expected outputs over the 0 to 50 ns timeframe.
-
-### Timing Diagram Waveform
+ Timing Diagram Waveform
 
 ```text
        0        10       20       30       40       50 (ns)
@@ -245,36 +199,3 @@ ax.spines['bottom'].set_color('#333333')
 plt.tight_layout()
 plt.savefig("timing_diagram.png", bbox_inches='tight')
 print("Saved timing_diagram.png successfully.")
-
-
-```
-
-```text
-Saved timing_diagram.png successfully.
-
-
-```
-
-Here is the graphical timing diagram representation for your ALU test sequence across the 0–50 ns timeframe.
-
-In digital hardware timing diagrams:
-
-* **Multi-bit buses** (Inputs, ALU Control, Result) are represented using crossover bus lines showing value transitions at $10\text{ ns}$ boundaries.
-* **Single-bit signals** (Zero Flag) are drawn as standard high/low digital logic lines.
-
----
-
-## Timing Waveform Breakdown
-
-* **$0\text{–}10\text{ ns}$ — Bitwise AND (`0000`):**
-Inputs $a = \text{A5A5A5A5}_{16}$ and $b = 5\text{A5A5A5A}_{16}$ share no overlapping $1$ bits, yielding `0x00000000`. The **Zero Flag** remains Low (`0`).
-* **$10\text{–}20\text{ ns}$ — Bitwise OR (`0001`):**
-Combining $a$ and $b$ sets every bit position to $1$, yielding `0xFFFFFFFF`.
-* **$20\text{–}30\text{ ns}$ — Addition (`0010`):**
-$10 + 20 = 30$ (`0x0000001E`).
-* **$30\text{–}40\text{ ns}$ — Subtraction (`0010` / `0110`):**
-$10 - 20 = -10$ (`0xFFFFFFF6` in 32-bit two's complement).
-* **$40\text{–}50\text{ ns}$ — Set Less Than (`0111`):**
-Since $5 < 10$ holds true, the output sets to `1` (`0x00000001`).
-
----
