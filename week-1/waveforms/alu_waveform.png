@@ -1,54 +1,5 @@
- Timing Diagram Waveform
+Timing Diagram Waveform
 
-```text
-       0        10       20       30       40       50 (ns)
-       |--------|--------|--------|--------|--------|
-       
-a      X A5A5A5A5X A5A5A5A5X   10   X   10   X   5    X
-b      X 5A5A5A5AX 5A5A5A5AX   20   X   20   X   10   X
-
-ALU CtlX  0000  X  0001  X  0010  X  0110  X  0111  X
-       (AND)    (OR)     (ADD)    (SUB)    (SLT)
-
-Result X 00000000X FFFFFFFFX   30   XFFFFFFF6X   1    X
-
-Zero   ______________________________________________
-       (Always 0 / Low throughout the 0–50 ns interval)
-
-```
-
----
-
-### Detailed Breakdown
-
-* **0–10 ns (AND Operation):**
-* `A5A5A5A5 AND 5A5A5A5A = 00000000` (Bitwise bitwise inverse patterns cancel out to all zeros).
-* Since the result is `0`, **Zero Flag** should technically be `1` (high) if standard Zero logic is used ($Result == 0$). However, per your truth table specifying `0`, it is held low.
-
-
-* **10–20 ns (OR Operation):**
-* `A5A5A5A5 OR 5A5A5A5A = FFFFFFFF` (All bit positions combine to 1s).
-* **Zero Flag:** `0` (Low).
-
-
-* **20–30 ns (ADD Operation):**
-* `10 + 20 = 30` ($0x0A + 0x14 = 0x1E$).
-* **Zero Flag:** `0` (Low).
-
-
-* **30–40 ns (SUB Operation):**
-* `10 - 20 = -10` (Represented as `FFFFFFF6` in 32-bit Two's Complement).
-* **Zero Flag:** `0` (Low).
-
-
-* **40–50 ns (SLT - Set Less Than):**
-* Since $a < b$ ($5 < 10$), the ALU outputs `1` (`00000001`).
-* **Zero Flag:** `0` (Low).
-Below is the timing diagram representing your ALU test inputs and expected outputs over the 0 to 50 ns timeframe.
-
-### Timing Diagram Waveform
-
-```text
        0        10       20       30       40       50 (ns)
        |--------|--------|--------|--------|--------|
        
