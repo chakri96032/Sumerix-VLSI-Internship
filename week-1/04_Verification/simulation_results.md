@@ -47,6 +47,6 @@ To verify the correctness of the Verilog modules (ALU, Register File, Control Un
 - All modules passed functional verification.
 - No mismatches observed between expected and simulated outputs.
 - Design is ready for extension (pipeline stages, hazard handling).
-![ALU Waveform](waveforms/alu_waveform.png)
-![Processor Waveform](waveforms/processor_waveform.png)
-![Datapath Waveform](waveforms/datapath_waveform.png)
+[ALU Waveform](waveforms/alu_waveform.png)
+[Processor Waveform](waveforms/processor_waveform.png)
+[Datapath Waveform](waveforms/datapath_waveform.png)
