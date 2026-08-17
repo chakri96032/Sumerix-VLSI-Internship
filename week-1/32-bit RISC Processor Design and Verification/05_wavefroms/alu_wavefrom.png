@@ -1,1 +1,152 @@
+Timing Diagram Waveform
 
+       0        10       20       30       40       50 (ns)
+       |--------|--------|--------|--------|--------|
+       
+a      X A5A5A5A5X A5A5A5A5X   10   X   10   X   5    X
+b      X 5A5A5A5AX 5A5A5A5AX   20   X   20   X   10   X
+
+ALU CtlX  0000  X  0001  X  0010  X  0110  X  0111  X
+       (AND)    (OR)     (ADD)    (SUB)    (SLT)
+
+Result X 00000000X FFFFFFFFX   30   XFFFFFFF6X   1    X
+
+Zero   ______________________________________________
+       (Always 0 / Low throughout the 0–50 ns interval)
+
+```
+
+---
+
+### Detailed Breakdown
+
+* **0–10 ns (AND Operation):**
+* `A5A5A5A5 AND 5A5A5A5A = 00000000` (Bitwise bitwise inverse patterns cancel out to all zeros).
+* Since the result is `0`, **Zero Flag** should technically be `1` (high) if standard Zero logic is used ($Result == 0$). However, per your truth table specifying `0`, it is held low.
+
+
+* **10–20 ns (OR Operation):**
+* `A5A5A5A5 OR 5A5A5A5A = FFFFFFFF` (All bit positions combine to 1s).
+* **Zero Flag:** `0` (Low).
+
+
+* **20–30 ns (ADD Operation):**
+* `10 + 20 = 30` ($0x0A + 0x14 = 0x1E$).
+* **Zero Flag:** `0` (Low).
+
+
+* **30–40 ns (SUB Operation):**
+* `10 - 20 = -10` (Represented as `FFFFFFF6` in 32-bit Two's Complement).
+* **Zero Flag:** `0` (Low).
+
+
+* **40–50 ns (SLT - Set Less Than):**
+* Since $a < b$ ($5 < 10$), the ALU outputs `1` (`00000001`).
+* **Zero Flag:** `0` (Low).
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Setup figure
+fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
+
+time_steps = [0, 10, 20, 30, 40, 50]
+
+# Signals
+# We will draw a digital timing diagram style plot with bus transitions and bit signals
+# Signals: Inputs (a, b), ALU Control, Expected Result, Zero Flag
+
+# Let's plot bus transitions at 0, 10, 20, 30, 40, 50 ns
+# For Zero flag, it's a binary signal stay at 0.
+
+plt.title("ALU Test Waveform / Timing Diagram", fontsize=14, fontweight='bold', pad=15)
+
+# Signal positions (Y axis)
+y_labels = ["Inputs (a, b)", "ALU Control", "Expected Result", "Zero Flag"]
+y_pos = [3.5, 2.5, 1.5, 0.5]
+
+for y in y_pos:
+    ax.axhline(y, color='gray', linestyle=':', alpha=0.3)
+
+# 1. Inputs (a, b)
+inputs_text = [
+    "a: A5A5A5A5\nb: 5A5A5A5A",
+    "a: A5A5A5A5\nb: 5A5A5A5A",
+    "a: 10, b: 20",
+    "a: 10, b: 20",
+    "a: 5, b: 10"
+]
+
+# 2. ALU Control
+alu_ctrl_text = [
+    "0000 (AND)",
+    "0001 (OR)",
+    "0010 (ADD)",
+    "0110 (SUB)",
+    "0111 (SLT)"
+]
+
+# 3. Expected Result
+res_text = [
+    "0x00000000",
+    "0xFFFFFFFF",
+    "30 (0x0000001E)",
+    "-10 (0xFFFFFFF6)",
+    "1 (0x00000001)"
+]
+
+def draw_bus(ax, y, time_steps, labels, color='#1f77b4'):
+    for i in range(len(labels)):
+        t_start = time_steps[i]
+        t_end = time_steps[i+1]
+        
+        # Hexagon/Bus cross at transitions
+        h = 0.35
+        # Top line
+        ax.plot([t_start+0.5, t_end-0.5], [y+h, y+h], color=color, lw=2)
+        # Bottom line
+        ax.plot([t_start+0.5, t_end-0.5], [y-h, y-h], color=color, lw=2)
+        
+        # Left transition (cross)
+        ax.plot([t_start, t_start+0.5], [y, y+h], color=color, lw=2)
+        ax.plot([t_start, t_start+0.5], [y, y-h], color=color, lw=2)
+        
+        # Right transition (cross)
+        ax.plot([t_end-0.5, t_end], [y+h, y], color=color, lw=2)
+        ax.plot([t_end-0.5, t_end], [y-h, y], color=color, lw=2)
+        
+        # Label in the middle
+        ax.text((t_start + t_end)/2, y, labels[i], ha='center', va='center', fontsize=9, fontweight='bold',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='none', alpha=0.8))
+
+draw_bus(ax, 3.5, time_steps, inputs_text, color='#2b5c8f')
+draw_bus(ax, 2.5, time_steps, alu_ctrl_text, color='#d95f02')
+draw_bus(ax, 1.5, time_steps, res_text, color='#7570b3')
+
+# Zero Flag (Digital low signal)
+# Signal stays low at 0.1 height above 0.5
+zf_y = 0.2
+ax.plot([0, 50], [zf_y, zf_y], color='#e7298a', lw=2.5)
+ax.text(25, zf_y + 0.15, "0 (Low)", ha='center', va='bottom', fontsize=10, color='#e7298a', fontweight='bold')
+
+# Formatting
+ax.set_yticks(y_pos)
+ax.set_yticklabels(y_labels, fontsize=11, fontweight='bold')
+ax.set_xticks(time_steps)
+ax.set_xticklabels([f"{t} ns" for t in time_steps], fontsize=10)
+ax.set_xlim(-2, 52)
+ax.set_ylim(0, 4.2)
+ax.set_xlabel("Time (nanoseconds)", fontsize=11, fontweight='bold', labelpad=10)
+
+# Add vertical gridlines for timing intervals
+for t in time_steps:
+    ax.axvline(t, color='black', linestyle='--', alpha=0.4, lw=1)
+
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_color('#333333')
+ax.spines['bottom'].set_color('#333333')
+
+plt.tight_layout()
+plt.savefig("timing_diagram.png", bbox_inches='tight')
+print("Saved timing_diagram.png successfully.")
