@@ -1,34 +1,27 @@
-module instruction_memory (
-    input  logic [31:0] address,
+initial begin
 
-    output logic [31:0] instruction
-);
+    // ADDI x1, x0, 10
+    memory[0] = 32'h2001000A;
 
-    logic [31:0] memory [0:255];
+    // ADDI x2, x0, 20
+    memory[1] = 32'h20020014;
 
-    integer i;
+    // ADD x3, x1, x2
+    memory[2] = 32'h00221820;
 
-    initial begin
+    // SUB x4, x2, x1
+    memory[3] = 32'h00412022;
 
-        // Initialize memory to NOP
-        for (i = 0; i < 256; i = i + 1)
-            memory[i] = 32'b0;
+    // AND x5, x1, x2
+    memory[4] = 32'h00222824;
 
-        // Example instructions
-        //
-        // These will be replaced with actual programs
-        // when we build the complete processor.
+    // OR x6, x1, x2
+    memory[5] = 32'h00223025;
 
-        memory[0] = 32'h00000000;
-        memory[1] = 32'h00000000;
-        memory[2] = 32'h00000000;
-        memory[3] = 32'h00000000;
+    // SW x3, 0(x0)
+    memory[6] = 32'hAC030000;
 
-    end
+    // LW x7, 0(x0)
+    memory[7] = 32'h8C070000;
 
-    // Word-aligned addressing
-    always_comb begin
-        instruction = memory[address[9:2]];
-    end
-
-endmodule
+end
